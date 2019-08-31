@@ -1,15 +1,15 @@
 buildscript {
-  repositories {
-    maven { url "https://plugins.gradle.org/m2/" }
-  }
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
 }
 
 plugins {
-  id "com.diffplug.gradle.spotless" version "3.24.1"
-  id "java"
-  id 'java-library'
-  id "maven"
-  id 'application'
+    id "com.diffplug.gradle.spotless" version "3.24.1"
+    id "java"
+    id 'java-library'
+    id "maven"
+    id 'application'
 }
 
 apply plugin: 'java'
@@ -18,37 +18,40 @@ group = "com.github.ahoffer"
 version = "0.1.0-SNAPSHOT"
 
 repositories {
-  maven { url "http://download.osgeo.org/webdav/geotools/" }
-  maven { url "http://repo.boundlessgeo.com/main" }
-  mavenCentral()
-  mavenLocal()
+    maven { url "http://download.osgeo.org/webdav/geotools/" }
+    maven { url "http://repo.boundlessgeo.com/main" }
+    mavenCentral()
+    mavenLocal()
 }
 
+// Added for quickstart tutorial
 task installJar(type: Exec) {
-  commandLine 'mvn install:install-file -Dfile="lib/jai_core-1.1.3.jar.zip" -DgroupId=javax.media -DartifactId=jai-core -Dversion=1.1.3 -Dpackaging=jar'
+    commandLine 'mvn install:install-file -Dfile="lib/jai_core-1.1.3.jar.zip" -DgroupId=javax.media -DartifactId=jai-core -Dversion=1.1.3 -Dpackaging=jar'
 }
 
 dependencies {
-  compile group: 'com.miglayout', name: 'miglayout', version: '3.7.4'
-  compile group: 'javax.media', name: 'jai-core', version: '1.1.3'
-  compile group: 'org.geotools', name: 'gt-shapefile', version: '20.5'
-  compile group: 'org.geotools', name: 'gt-swing', version: '20.5'
-  implementation 'org.geotools:gt-epsg-hsql:20.5'
+    // Added for quickstart tutorial
+    compile group: 'com.miglayout', name: 'miglayout', version: '3.7.4'
+    compile group: 'javax.media', name: 'jai-core', version: '1.1.3'
+    compile group: 'org.geotools', name: 'gt-shapefile', version: '20.5'
+    compile group: 'org.geotools', name: 'gt-swing', version: '20.5'
+
+    // Added for feature tutorial
+    implementation 'org.geotools:gt-epsg-hsql:20.5'
 }
 
-// gradlew run
+// Added task gradlew run to run quickstart GUI
 application {
-  mainClassName = 'org.geotools.tutorial.quickstart.Quickstart'
+    mainClassName = 'org.geotools.tutorial.quickstart.Quickstart'
 }
 
+// Automatic formatting
 spotless {
-
-  java {
-    googleJavaFormat()
-  }
-
-  groovyGradle {
-    target '*.gradle'
-    greclipse().configFile('greclipse.properties')
-  }
+    java {
+        googleJavaFormat()
+    }
+    groovyGradle {
+        target '*.gradle'
+        greclipse().configFile('greclipse.properties')
+    }
 }

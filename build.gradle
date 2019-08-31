@@ -8,6 +8,7 @@ plugins {
     id "com.diffplug.gradle.spotless" version "3.24.1"
     id "java"
     id "maven"
+    id 'application'
 }
 
 group = "com.github.ahoffer"
@@ -15,16 +16,21 @@ version = "0.1.0-SNAPSHOT"
 
 repositories {
     maven { url "http://download.osgeo.org/webdav/geotools/" }
+    maven { url "http://repo.boundlessgeo.com/main" }
     mavenCentral()
     mavenLocal()
 }
-task installJar(type:Exec) {
+task installJar(type: Exec) {
     commandLine 'mvn install:install-file -Dfile="lib/jai_core-1.1.3.jar.zip" -DgroupId=javax.media -DartifactId=jai-core -Dversion=1.1.3 -Dpackaging=jar'
 }
 dependencies {
     compile group: 'com.miglayout', name: 'miglayout', version: '3.7.4'
     compile group: 'javax.media', name: 'jai-core', version: '1.1.3'
-    compile group: 'org.geotools', name: 'gt-shapefile', version: '2.7-M2'
-    compile group: 'org.geotools', name: 'gt-swing', version: '2.7-M2'
+    compile group: 'org.geotools', name: 'gt-shapefile', version: '20.5'
+    compile group: 'org.geotools', name: 'gt-swing', version: '20.5'
 }
 
+// gradlew run
+application {
+    mainClassName = 'org.geotools.tutorial.quickstart.Quickstart'
+}

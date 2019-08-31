@@ -32,12 +32,12 @@ public class Quickstart {
     SimpleFeatureSource featureSource = store.getFeatureSource();
 
     // Create a map context and add our shapefile to it
-    MapContext map = new DefaultMapContext();
-    map.setTitle("Quickstart");
-    map.addLayer(featureSource, null);
-
-    // Now display the map
-    JMapFrame.showMap(map);
+//    MapContext map = new DefaultMapContext();
+//    map.setTitle("Quickstart");
+//    map.addLayer(featureSource, null);
+//
+//    // Now display the map
+//    JMapFrame.showMap(map);
   }
 
 }

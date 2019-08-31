@@ -1,7 +1,6 @@
 package org.geotools.tutorial.quickstart;
 
 import java.io.File;
-
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureSource;
@@ -12,8 +11,8 @@ import org.geotools.swing.data.JFileDataStoreChooser;
 
 /**
  * Prompts the user for a shapefile and displays the contents on the screen in a map frame.
- * <p>
- * This is the GeoTools Quickstart application used in documentationa and tutorials. *
+ *
+ * <p>This is the GeoTools Quickstart application used in documentationa and tutorials. *
  */
 public class Quickstart {
 
@@ -31,13 +30,12 @@ public class Quickstart {
     FileDataStore store = FileDataStoreFinder.getDataStore(file);
     SimpleFeatureSource featureSource = store.getFeatureSource();
 
-    // Create a map context and add our shapefile to it
-//    MapContext map = new DefaultMapContext();
-//    map.setTitle("Quickstart");
-//    map.addLayer(featureSource, null);
-//
-//    // Now display the map
-//    JMapFrame.showMap(map);
-  }
+    //     Create a map context and add our shapefile to it
+    MapContext map = new DefaultMapContext();
+    map.setTitle("Quickstart");
+    map.addLayer(featureSource, null);
 
+    // Now display the map
+    JMapFrame.showMap(map);
+  }
 }

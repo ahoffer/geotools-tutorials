@@ -40,10 +40,20 @@ dependencies {
     implementation 'org.geotools:gt-epsg-hsql:20.5'
 }
 
-// Added task gradlew run to run quickstart GUI
-application {
-    mainClassName = 'org.geotools.tutorial.quickstart.Quickstart'
+// Task to run Quickstart Tutorial
+// Execute "gradlew quickstart" on the command line
+task(quickstart, dependsOn: 'classes', type: JavaExec) {
+    main = "org.geotools.tutorial.quickstart.Quickstart"
+    classpath = sourceSets.main.runtimeClasspath
 }
+
+// Task to run Feature Tutorial
+// Execute "gradlew feature" on the command line
+task(csv2shape, dependsOn: 'classes', type: JavaExec) {
+    main = "org.geotools.tutorial.feature.Csv2Shape"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 
 // Automatic formatting
 spotless {

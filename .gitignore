@@ -10,4 +10,4 @@ build
 *.iml
 
 # Output files from tutorials
-/data/output-feature-tutorial
+/data/output-feature-tutorial/*

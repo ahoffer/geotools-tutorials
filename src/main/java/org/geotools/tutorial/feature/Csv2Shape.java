@@ -76,7 +76,7 @@ public class Csv2Shape {
     System.out.println("SHAPE:" + featureType);
   }
 
-  private static void setUiLookAndFeel()
+  static void setUiLookAndFeel()
       throws ClassNotFoundException, InstantiationException, IllegalAccessException,
           UnsupportedLookAndFeelException {
     // Set cross-platform look & feel for compatibility
@@ -84,7 +84,7 @@ public class Csv2Shape {
   }
 
   // -----------------------------------------------------------------------------------------------
-  private static Map<String, Serializable> createDatastoreParameters(File newFile)
+  static Map<String, Serializable> createDatastoreParameters(File newFile)
       throws MalformedURLException {
     Map<String, Serializable> params = new HashMap<>();
     params.put("url", newFile.toURI().toURL());
@@ -96,7 +96,7 @@ public class Csv2Shape {
   Use  GeometryFactory to create new Points
   Creation of features (SimpleFeature objects) using SimpleFeatureBuilder
   */
-  private static List<SimpleFeature> buildFeaturesFromCsvFile(
+  static List<SimpleFeature> buildFeaturesFromCsvFile(
       File csvFile, GeometryFactory geometryFactory, SimpleFeatureBuilder featureBuilder)
       throws IOException {
     List<SimpleFeature> features = new ArrayList<>();
@@ -135,7 +135,7 @@ public class Csv2Shape {
    *
    * See also the createFeatureType method below for another, more flexible approach.
    */
-  private static SimpleFeatureType createSimpleFeatureType() throws SchemaException {
+  static SimpleFeatureType createSimpleFeatureType() throws SchemaException {
     return DataUtilities.createType(
         "Location",
         "the_geom:Point:srid=4326,"
@@ -151,7 +151,7 @@ public class Csv2Shape {
    *
    * @return name and path for the shapefile as a new File object
    */
-  private static File getNewShapeFile() {
+  static File getNewShapeFile() {
 
     JFileDataStoreChooser chooser = new JFileDataStoreChooser("shp");
     chooser.setDialogTitle("Save shapefile");
@@ -164,7 +164,7 @@ public class Csv2Shape {
     return newFile;
   }
 
-  private static File getInputFile() {
+  static File getInputFile() {
     File inputFile = null;
     var input = System.getProperty("input");
     if (null == input) {

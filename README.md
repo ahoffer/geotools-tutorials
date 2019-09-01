@@ -1,3 +1,8 @@
+### How I run the Features tutorial
+`gradlew csv2shape -Dinput=/projects/geotools-tutorials/data/locations.csv -Doutput=/projects/geotools-tutorials/data/output-feature-tutorial/locations.shp`
+
+To run the debugger and use breakpoints, add `--debug-jvm`
+
 ### Install JAI core into local maven repository
 
 `mvn install:install-file -Dfile="lib/jai_core-1.1.3.jar.zip" -DgroupId=javax.media -DartifactId=jai-core -Dversion=1.1.3 -Dpackaging=jar`

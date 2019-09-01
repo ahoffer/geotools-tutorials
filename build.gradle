@@ -52,7 +52,9 @@ task(quickstart, dependsOn: 'classes', type: JavaExec) {
 task(csv2shape, dependsOn: 'classes', type: JavaExec) {
     main = "org.geotools.tutorial.feature.Csv2Shape"
     classpath = sourceSets.main.runtimeClasspath
-}
+    // Assign all Java system properties from
+    // the command line to the JavaExec task.
+    systemProperties System.properties}
 
 
 // Automatic formatting

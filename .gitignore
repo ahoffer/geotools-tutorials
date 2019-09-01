@@ -8,3 +8,6 @@ build
 .idea
 
 *.iml
+
+# Output files from tutorials
+/data/output-feature-tutorial

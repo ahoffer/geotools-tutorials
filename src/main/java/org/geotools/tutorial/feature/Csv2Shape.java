@@ -1,13 +1,25 @@
 package org.geotools.tutorial.feature;
 
+import static java.lang.System.exit;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.geotools.data.DataUtilities;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.Transaction;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
@@ -19,34 +31,65 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
- * This example reads data for point locations and associated attributes from a comma separated text
- * (CSV) file and exports them as a new shapefile. It illustrates how to build a feature type.
- *
- * <p>Note: to keep things simple in the code below the input file should not have additional spaces
- * or tabs between fields.
+ * The tutorial covers creating a FeatureType, FeatureCollection and Features. It uses a
+ * GeometryFactory to build Points, then writes out a Shapefile. We also force projection. We start
+ * by building a shapefile from scratch so you get to see every last * thing that goes into creating
+ * features. To keep things simple the values in the input file should not have additional spaces or
+ * tabs between fields.
  */
 public class Csv2Shape {
 
   public static void main(String[] args) throws Exception {
-    // Set cross-platform look & feel for compatibility
-    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
-    // Let user choose a file
-    File file = JFileDataStoreChooser.showOpenFile("csv", null);
-    if (file == null) {
-      return;
-    }
+    // Tasks unrelated to GIS
+    setUiLookAndFeel();
+    File inputFile = getInputFile();
 
     // Create FeatureType
-    final SimpleFeatureType TYPE = createSimpleFeatureType();
-    System.out.println("TYPE:" + TYPE);
+    final SimpleFeatureType tutorialFeatureType = createSimpleFeatureType();
+    System.out.println("TYPE:" + tutorialFeatureType);
 
-    // GeometryFactory creates the geometry attribute a feature using a Point for the location.
+    // Create a collection of features using the data in the file.
     org.locationtech.jts.geom.GeometryFactory geometryFactory =
         JTSFactoryFinder.getGeometryFactory();
-    SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(TYPE);
+    SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(tutorialFeatureType);
+    List<SimpleFeature> features =
+        buildFeaturesFromCsvFile(inputFile, geometryFactory, featureBuilder);
 
-    List<SimpleFeature> features = buildFeaturesFromCsvFile(file, geometryFactory, featureBuilder);
+    // Get a file object to use for the new shape file.
+    File outputFile = getOutputFile();
+
+    // Create a datastore for the a new shape file.
+    ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
+    ShapefileDataStore newDataStore =
+        (ShapefileDataStore)
+            dataStoreFactory.createNewDataStore(createDatastoreParameters(outputFile));
+
+    // Set the schema for the data store.
+    newDataStore.createSchema(tutorialFeatureType);
+
+    // Write the features to the shapefile
+    Transaction transaction = new DefaultTransaction("create");
+    String typeName = newDataStore.getTypeNames()[0];
+    SimpleFeatureSource featureSource = newDataStore.getFeatureSource(typeName);
+    SimpleFeatureType featureType = featureSource.getSchema();
+    System.out.println("SHAPE:" + featureType);
+  }
+
+  private static void setUiLookAndFeel()
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+          UnsupportedLookAndFeelException {
+    // Set cross-platform look & feel for compatibility
+    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+  }
+
+  // -----------------------------------------------------------------------------------------------
+  private static Map<String, Serializable> createDatastoreParameters(File newFile)
+      throws MalformedURLException {
+    Map<String, Serializable> params = new HashMap<>();
+    params.put("url", newFile.toURI().toURL());
+    params.put("create spatial index", Boolean.TRUE);
+    return params;
   }
 
   /* Read CSV file and create a feature for each record. Please note the following:
@@ -101,5 +144,55 @@ public class Csv2Shape {
             + // <- a String attribute
             "number:Integer" // a number attribute
         );
+  }
+
+  /**
+   * Prompt the user for the name and path to use for the output shapefile
+   *
+   * @return name and path for the shapefile as a new File object
+   */
+  private static File getNewShapeFile() {
+
+    JFileDataStoreChooser chooser = new JFileDataStoreChooser("shp");
+    chooser.setDialogTitle("Save shapefile");
+    int returnVal = chooser.showSaveDialog(null);
+    if (returnVal != JFileDataStoreChooser.APPROVE_OPTION) {
+      // the user cancelled the dialog
+      exit(0);
+    }
+    File newFile = chooser.getSelectedFile();
+    return newFile;
+  }
+
+  private static File getInputFile() {
+    File inputFile = null;
+    var input = System.getProperty("input");
+    if (null == input) {
+      // Let user choose a file
+      inputFile = JFileDataStoreChooser.showOpenFile("csv", null);
+    } else {
+      // Use file passed in as command line argument
+      inputFile = new File(input);
+    }
+    if (!inputFile.canRead()) {
+      System.err.println("Cannot read from input file: " + input);
+      exit(1);
+    }
+    return inputFile;
+  }
+
+  static File getOutputFile() {
+    File outputFile = null;
+    var output = System.getProperty("output");
+    if (null == output) {
+      outputFile = getNewShapeFile();
+    } else {
+      outputFile = new File(output);
+      if (!outputFile.exists()) {
+        System.err.println("Cannot write to output file: " + output);
+        exit(1);
+      }
+    }
+    return outputFile;
   }
 }

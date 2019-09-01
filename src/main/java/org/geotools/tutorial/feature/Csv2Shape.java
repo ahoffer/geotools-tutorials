@@ -17,15 +17,17 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
+import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -46,15 +48,12 @@ public class Csv2Shape {
     File inputFile = getInputFile();
 
     // Create FeatureType
-    final SimpleFeatureType tutorialFeatureType = createSimpleFeatureType();
-    System.out.println("TYPE:" + tutorialFeatureType);
+    final SimpleFeatureType TYPE = createSimpleFeatureType();
+    System.err.println("TYPE:" + TYPE);
 
     // Create a collection of features using the data in the file.
-    org.locationtech.jts.geom.GeometryFactory geometryFactory =
-        JTSFactoryFinder.getGeometryFactory();
-    SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(tutorialFeatureType);
-    List<SimpleFeature> features =
-        buildFeaturesFromCsvFile(inputFile, geometryFactory, featureBuilder);
+
+    List<SimpleFeature> features = buildFeaturesFromCsvFile(inputFile, TYPE);
 
     // Get a file object to use for the new shape file.
     File outputFile = getOutputFile();
@@ -66,16 +65,32 @@ public class Csv2Shape {
             dataStoreFactory.createNewDataStore(createDatastoreParameters(outputFile));
 
     // Set the schema for the data store.
-    newDataStore.createSchema(tutorialFeatureType);
+    newDataStore.createSchema(TYPE);
 
-    // Write the features to the shapefile
+    // Start a transaction
     Transaction transaction = new DefaultTransaction("create");
+
     String typeName = newDataStore.getTypeNames()[0];
     SimpleFeatureSource featureSource = newDataStore.getFeatureSource(typeName);
-    SimpleFeatureType featureType = featureSource.getSchema();
-    System.out.println("SHAPE:" + featureType);
+    SimpleFeatureType SHAPE_TYPE = featureSource.getSchema();
+    System.err.println("SHAPE:" + SHAPE_TYPE);
+
+    SimpleFeatureStore featureStore = (SimpleFeatureStore) featureSource;
+    SimpleFeatureCollection collection = new ListFeatureCollection(TYPE, features);
+    featureStore.setTransaction(transaction);
+    try {
+      featureStore.addFeatures(collection);
+      transaction.commit();
+    } catch (Exception problem) {
+      problem.printStackTrace();
+      transaction.rollback();
+    } finally {
+      transaction.close();
+    }
+    return;
   }
 
+  // -----------------------------------------------------------------------------------------------
   static void setUiLookAndFeel()
       throws ClassNotFoundException, InstantiationException, IllegalAccessException,
           UnsupportedLookAndFeelException {
@@ -83,7 +98,6 @@ public class Csv2Shape {
     UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
   }
 
-  // -----------------------------------------------------------------------------------------------
   static Map<String, Serializable> createDatastoreParameters(File newFile)
       throws MalformedURLException {
     Map<String, Serializable> params = new HashMap<>();
@@ -96,15 +110,17 @@ public class Csv2Shape {
   Use  GeometryFactory to create new Points
   Creation of features (SimpleFeature objects) using SimpleFeatureBuilder
   */
-  static List<SimpleFeature> buildFeaturesFromCsvFile(
-      File csvFile, GeometryFactory geometryFactory, SimpleFeatureBuilder featureBuilder)
+  static List<SimpleFeature> buildFeaturesFromCsvFile(File csvFile, SimpleFeatureType featureType)
       throws IOException {
+    org.locationtech.jts.geom.GeometryFactory geometryFactory =
+        JTSFactoryFinder.getGeometryFactory();
+    SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
     List<SimpleFeature> features = new ArrayList<>();
 
     try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
       /* First line of the data file is the header */
       String line = reader.readLine();
-      System.out.println("Header: " + line);
+      System.err.println("Header: " + line);
 
       for (line = reader.readLine(); line != null; line = reader.readLine()) {
         if (line.trim().length() > 0) { // skip blank lines

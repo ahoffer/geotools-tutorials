@@ -54,8 +54,8 @@ task(csv2shape, dependsOn: 'classes', type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     // Assign all Java system properties from
     // the command line to the JavaExec task.
-    systemProperties System.properties}
-
+    systemProperties System.properties
+}
 
 // Automatic formatting
 spotless {

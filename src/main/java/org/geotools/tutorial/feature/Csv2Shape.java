@@ -1,6 +1,7 @@
 package org.geotools.tutorial.feature;
 
 import static java.lang.System.exit;
+import static javax.swing.JFileChooser.APPROVE_OPTION;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -74,7 +75,6 @@ public class Csv2Shape {
     SimpleFeatureCollection collection = new ListFeatureCollection(TYPE, features);
     featureStore.addFeatures(collection);
     saveToDatastore(featureStore);
-    return;
   }
 
   private static void printSchema(SimpleFeatureSource featureSource) {
@@ -177,12 +177,11 @@ public class Csv2Shape {
     JFileDataStoreChooser chooser = new JFileDataStoreChooser("shp");
     chooser.setDialogTitle("Save shapefile");
     int returnVal = chooser.showSaveDialog(null);
-    if (returnVal != JFileDataStoreChooser.APPROVE_OPTION) {
+    if (returnVal != APPROVE_OPTION) {
       // the user cancelled the dialog
       exit(0);
     }
-    File newFile = chooser.getSelectedFile();
-    return newFile;
+    return chooser.getSelectedFile();
   }
 
   static File getInputFile() {

@@ -52,7 +52,6 @@ public class Csv2Shape {
     System.err.println("TYPE:" + TYPE);
 
     // Create a collection of features using the data in the file.
-
     List<SimpleFeature> features = buildFeaturesFromCsvFile(inputFile, TYPE);
 
     // Get a file object to use for the new shape file.
@@ -67,19 +66,27 @@ public class Csv2Shape {
     // Set the schema for the data store.
     newDataStore.createSchema(TYPE);
 
-    // Start a transaction
-    Transaction transaction = new DefaultTransaction("create");
-
     String typeName = newDataStore.getTypeNames()[0];
     SimpleFeatureSource featureSource = newDataStore.getFeatureSource(typeName);
-    SimpleFeatureType SHAPE_TYPE = featureSource.getSchema();
-    System.err.println("SHAPE:" + SHAPE_TYPE);
+    printSchema(featureSource);
 
     SimpleFeatureStore featureStore = (SimpleFeatureStore) featureSource;
     SimpleFeatureCollection collection = new ListFeatureCollection(TYPE, features);
+    featureStore.addFeatures(collection);
+    saveToDatastore(featureStore);
+    return;
+  }
+
+  private static void printSchema(SimpleFeatureSource featureSource) {
+    SimpleFeatureType SHAPE_TYPE = featureSource.getSchema();
+    System.err.println("SHAPE:" + SHAPE_TYPE);
+  }
+
+  // -----------------------------------------------------------------------------------------------
+  static void saveToDatastore(SimpleFeatureStore featureStore) throws IOException {
+    Transaction transaction = new DefaultTransaction("create");
     featureStore.setTransaction(transaction);
     try {
-      featureStore.addFeatures(collection);
       transaction.commit();
     } catch (Exception problem) {
       problem.printStackTrace();
@@ -87,10 +94,8 @@ public class Csv2Shape {
     } finally {
       transaction.close();
     }
-    return;
   }
 
-  // -----------------------------------------------------------------------------------------------
   static void setUiLookAndFeel()
       throws ClassNotFoundException, InstantiationException, IllegalAccessException,
           UnsupportedLookAndFeelException {

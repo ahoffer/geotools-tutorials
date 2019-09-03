@@ -52,7 +52,7 @@ dependencies {
     // Added for query tutorial
     implementation group: 'org.geotools.jdbc', name: 'gt-jdbc-postgis', version: geotools_version
 
-    // Added for Solr experiement
+    // Added for Solr experiment
     implementation group: 'org.geotools', name: 'gt-solr', version: geotools_version
 }
 

@@ -16,6 +16,10 @@ apply plugin: 'java'
 group = "com.github.ahoffer"
 version = "0.1.0-SNAPSHOT"
 
+test {
+    useJUnitPlatform()
+}
+
 repositories {
     maven { url "http://download.osgeo.org/webdav/geotools/" }
     maven { url "http://repo.boundlessgeo.com/main" }
@@ -30,20 +34,11 @@ task installJar(type: Exec) {
     commandLine 'mvn install:install-file -Dfile="lib/commons-beanutils-1.9.2-noclassprop.jar" -DgroupId=commons-beanutils -DartifactId=commons-beanutils -Dversion=1.9.2 -Dpackaging=jar -Dclassifier=noclassprop'
 }
 
-//test {
-//    useJUnitPlatform()
-//}
-
 def geotools_version = '20.5'
 dependencies {
-    // This dependency is used by the application.
-    implementation 'com.google.guava:guava:28.0-jre'
-
-    // Use JUnit Jupiter API for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
-
-    // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.5.1"
+    testCompile "org.mockito:mockito-core:3.0.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.1"
 
     // Added for quickstart tutorial
     implementation group: 'com.miglayout', name: 'miglayout', version: '3.7.4'

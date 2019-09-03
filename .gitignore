@@ -5,6 +5,11 @@
 build
 out
 
+# TODO: Why did I have to download JUnit libs? Should have been pulled in as gradle dependencies.
+/lib/apiguardian*
+/lib/junit*
+/lib/opentest*
+
 # IntelliJ
 .idea
 *.iml

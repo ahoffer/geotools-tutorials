@@ -30,8 +30,16 @@ task installJar(type: Exec) {
     commandLine 'mvn install:install-file -Dfile="lib/commons-beanutils-1.9.2-noclassprop.jar" -DgroupId=commons-beanutils -DartifactId=commons-beanutils -Dversion=1.9.2 -Dpackaging=jar -Dclassifier=noclassprop'
 }
 
+//test {
+//    useJUnitPlatform()
+//}
+
 def geotools_version = '20.5'
 dependencies {
+
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+
     // Added for quickstart tutorial
     implementation group: 'com.miglayout', name: 'miglayout', version: '3.7.4'
     implementation group: 'javax.media', name: 'jai-core', version: '1.1.3'

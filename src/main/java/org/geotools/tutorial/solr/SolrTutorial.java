@@ -1,6 +1,6 @@
 package org.geotools.tutorial.solr;
 
-public class Solr {
+public class SolrTutorial {
 
   public static void main(String[] args) {}
 }

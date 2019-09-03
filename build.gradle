@@ -36,9 +36,14 @@ task installJar(type: Exec) {
 
 def geotools_version = '20.5'
 dependencies {
+    // This dependency is used by the application.
+    implementation 'com.google.guava:guava:28.0-jre'
 
-//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    // Use JUnit Jupiter API for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
 
     // Added for quickstart tutorial
     implementation group: 'com.miglayout', name: 'miglayout', version: '3.7.4'

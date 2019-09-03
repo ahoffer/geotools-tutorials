@@ -3,13 +3,11 @@
 
 # Ignore Gradle build output directory
 build
-/out
+out
 
-#IntelliJ
+# IntelliJ
 .idea
-
 *.iml
 
-# Output files from tutorials
-/data/output-feature-tutorial/*
-
+# Outputs
+data/output-feature-tutorial

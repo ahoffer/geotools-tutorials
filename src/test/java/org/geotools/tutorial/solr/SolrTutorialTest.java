@@ -2,6 +2,6 @@ package org.geotools.tutorial.solr;
 
 class SolrTutorialTest {
 
-//  @Test
+  //  @Test
   public void test() {}
 }

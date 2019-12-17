@@ -29,9 +29,11 @@ repositories {
 
 task installJar(type: Exec) {
     // Added for quickstart tutorial
-    commandLine 'mvn install:install-file -Dfile="lib/jai_core-1.1.3.jar.zip" -DgroupId=javax.media -DartifactId=jai-core -Dversion=1.1.3 -Dpackaging=jar'
+    commandLine 'mvn', 'install:install-file', '-Dfile=lib/jai_core-1.1.3.jar.zip', '-DgroupId=javax.media', '-DartifactId=jai-core', '-Dversion=1.1.3', '-Dpackaging=jar'
+
     // Added for Solr plugin
-    commandLine 'mvn install:install-file -Dfile="lib/commons-beanutils-1.9.2-noclassprop.jar" -DgroupId=commons-beanutils -DartifactId=commons-beanutils -Dversion=1.9.2 -Dpackaging=jar -Dclassifier=noclassprop'
+    commandLine 'mvn', 'install:install-file', '-Dfile=lib/commons-beanutils-1.9.2-noclassprop.jar', '-DgroupId=commons-beanutils', '-DartifactId=commons-beanutils', '-Dversion=1.9.2', '-Dpackaging=jar', '-Dclassifier=noclassprop'
+
 }
 
 def geotools_version = '20.5'
